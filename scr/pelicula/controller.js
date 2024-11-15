@@ -2,7 +2,7 @@ import {ObjectId} from 'mongodb'
 import client from '../common/db.js'
 import { Pelicula } from './pelicula.js'
 
-const peliculaColletion = client.db('cine-db').collection('peliculas')
+const peliculaCollection = client.db('cine-db').collection('peliculas')
 
 async function handleInsertPeliculaRequest(req,res){
     let data =req.body
@@ -12,7 +12,7 @@ async function handleInsertPeliculaRequest(req,res){
     pelicula.generos =data.generos
     pelicula.anioEstreno = data.anioEstreno
 
-    await peliculaColletion.insertOne(pelicula)
+    await peliculaCollection.insertOne(pelicula)
     .then((data) => {
         if(data === null) return res.status(400).send('error al guardar el registro')
 
@@ -23,7 +23,7 @@ async function handleInsertPeliculaRequest(req,res){
 }
 
 async function handleGetPeliculasRequest(req,res){
-    await peliculaColletion.find({}).toArray()
+    await peliculaCollection.find({}).toArray()
     .then((data) => {return res.status(200).send(data)})
     .catch((e) =>{return res.status(500).send(e)})
 
@@ -35,7 +35,7 @@ async function handleGetPeliculaByIdRequest(req,res){
     try{
         let oid = ObjectId.createFromHexString(id)
 
-        await peliculaColletion.findOne({_id : oid})
+        await peliculaCollection.findOne({_id:oid})
         .then((data) => {
             if(data === null) return res.status(404).send(data)
             
@@ -56,14 +56,14 @@ async function handleUpdatePeliculaRequest(req,res) {
    let pelicula = req.body
 
    try{
-    let oid = ObjectId.createFromHexString(id)
+        let oid = ObjectId.createFromHexString(id)
 
-    let query = {$set: pelicula}
+        let query = {$set: pelicula}
 
-    await peliculaColletion.updateOne({_id :oid})
-    .then((data) =>{return res.status(200).send(data)})
-    .catch((e) => {return res.status(400).send({code: e.code})})
-   }catch{
+        await peliculaCollection.updateOne({_id :oid},query)
+        .then((data) =>{return res.status(200).send(data)})
+        .catch((e) => {return res.status(400).send({code: e.code})})
+   }catch(e){
     return res.status(400).send('id en mal formato')
    }
 
@@ -76,7 +76,7 @@ async function handleDeletePeliculaByIdRequest(req,res) {
     try{
         let oid = ObjectId.createFromHexString(id)
 
-        await peliculaColletion.deleteOne({_id:oid})
+        await peliculaCollection.deleteOne({_id:oid})
         .then((data) => {return res.status(200).send(data)})
         .catch((e) => {return res.status(500).send({ doce: e.code})})
 

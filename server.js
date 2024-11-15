@@ -2,7 +2,8 @@ import express, {urlencoded} from 'express'
 import cors from 'cors'
 
 import client from './scr/common/db.js'
-import peliculaRouters from './scr/pelicula/peliculaRouter.js'
+import peliculasRoutes from './scr/pelicula/peliculaRouter.js'
+import actorRoutes from './scr/actor/actorRouter.js'
 
 const PORTS = 3000 || 3001
 const app = express()
@@ -13,7 +14,8 @@ app.use(cors())
 
 //ruta por defecto
 app.all('/',(req,res) => {return res.status(200).send('Bienvenido al cine2')})
-app.use('/api', peliculaRouters)
+app.use('/api', peliculasRoutes)
+app.use('/api', actorRoutes)
 
 await client.connect()
 .then(() => {
