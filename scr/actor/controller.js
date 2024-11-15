@@ -59,7 +59,7 @@ async function handleGetActorByIdRequest(req,res) {
     let id = req.params.id
     
     try{
-        let oid =ObjectId.createFromHexString({_id:oid})
+        let oid =ObjectId.createFromHexString(id)
         await actorCollection.findOne({_id:oid})
         .then((data) =>{
             if(data === null) return res.status(404).send(data)
